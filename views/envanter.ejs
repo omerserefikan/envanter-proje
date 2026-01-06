@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Envanter - Liste ve Kayıt</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Tablo satırlarına hafif geçiş efekti ekleyelim */
+        .table-hover tbody tr:hover { background-color: #f8f9fa; transition: 0.3s; }
+        .badge { font-size: 0.9em; padding: 0.5em 0.8em; }
+    </style>
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">BT Envanter Sistemi</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="/">Ana Sayfa</a>
+                <a class="nav-link active" href="/envanter">Envanter Listesi / Veri Ekle</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+        <h2 class="mb-4 fw-bold text-secondary">Envanter Yönetimi</h2>
+
+        <div class="card shadow-sm border-0 mb-5">
+            <div class="card-header bg-primary text-white py-3">
+                <h5 class="mb-0">Yeni Cihaz Kaydı</h5>
+            </div>
+            <div class="card-body p-4">
+                <form action="/envanter/ekle" method="POST" class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Cihaz Adı</label>
+                        <input type="text" name="cihaz_adi" class="form-control" placeholder="Örn: HP Yazıcı, Dell Laptop" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Durum</label>
+                        <select name="durum" class="form-select">
+                            <option value="Kullanımda">Kullanımda</option>
+                            <option value="Stokta">Stokta</option>
+                            <option value="Arızalı">Arızalı</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Zimmetli Kişi</label>
+                        <input type="text" name="zimmetli_kisi" class="form-control" placeholder="Personel Adı">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-success w-100 fw-bold">Sisteme Yaz</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-dark text-white py-3">
+                <h5 class="mb-0">Mevcut Envanter Listesi</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="px-4">ID</th>
+                                <th>Cihaz Adı</th>
+                                <th>Durum</th>
+                                <th>Zimmetli Kişi</th>
+                                <th class="text-center">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (cihazlar.length > 0) { %>
+                                <% cihazlar.forEach(cihaz => { %>
+                                    <tr>
+                                        <td class="px-4 fw-bold text-muted">#<%= cihaz.id %></td>
+                                        <td><%= cihaz.cihaz_adi %></td>
+                                        <td>
+                                            <span class="badge 
+                                                <%= cihaz.durum === 'Kullanımda' ? 'bg-primary' : 
+                                                   cihaz.durum === 'Arızalı' ? 'bg-danger' : 'bg-warning text-dark' %>">
+                                                <%= cihaz.durum %>
+                                            </span>
+                                        </td>
+                                        <td><%= cihaz.zimmetli_kisi ? cihaz.zimmetli_kisi : '---' %></td>
+                                        <td class="text-center">
+                                            <a href="/envanter/sil/<%= cihaz.id %>" 
+                                               class="btn btn-outline-danger btn-sm px-3" 
+                                               onclick="return confirm('<%= cihaz.cihaz_adi %> isimli cihazı kalıcı olarak silmek istediğinize emin misiniz?')">
+                                               Sil
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-muted italic">
+                                        Henüz kayıtlı cihaz bulunmuyor. Yeni bir cihaz ekleyerek başlayabilirsiniz.
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
